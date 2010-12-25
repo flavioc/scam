@@ -41,7 +41,7 @@ Falar dos conceitos por detrás do aspect j, AOP, razoes para sua existencia, es
 \section{Aspect Oriented Programming}
 
 \emph{Aspect Oriented Programming} (AOP) is a new programming paradigm that tries to tackle some problems
-found in imperative and object oriented (OOP) paradigms. While those paradigms have made great progress towards
+found in imperative and object oriented (OOP) paradigms \cite{Kiczales97aspect-orientedprogramming}. While those paradigms have made great progress towards
 making software more modular and composable, they are unable to modularize and deal with \emph{crosscutting concerns}.
 These concerns defy well-known abstractions like classes, methods and functions and crosscut the
 natural modularity present in the implementation of complex systems by being dispersed
@@ -81,7 +81,23 @@ aqui deviam aparecer dois exemplos: logging e observer pattern?
 
 \section{Technical Details}
 
-Falar de como o Aspect J faz processamento do codigo java para inserir os aspectos
+The main purpose of AspectJ is to insert advice code at the declared pointcuts and ensure that
+both core and advice code runs well together, in a process called \emph{aspect weaving}.
+As AspectJ is at its core only a specification, it does not force any implementation method.
+However, the implemented tool itself tries to do most of the work during the compile-time, by
+inserting the advice code directly into the pointcuts before compilation. This has the advantage of
+allowing the compiler to catch errors earlier and increasing the efficiency of the final program.
+
+Code not affected by aspects is compiled as traditional code, while code where advices apply are
+transformed to insert static points corresponding to the dynamic joint points.
+For pointcut descriptors like \texttt{cflow} or \texttt{instanceof}, the weaver must insert
+code at the static points for runtime checking.
+
+Before and after advices are compiled as standard methods and are called at the static points in
+the program. Around advices are compiled into multiple methods, one for each static point in the code.
+While this increases the code size, we trade that for boosted runtime efficiency of the code since
+it is easier to access state through the call-stack and to implement the \texttt{proceed} statement
+without costly runtime mechanisms.
 
 \section{Conclusions}
 
