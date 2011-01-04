@@ -33,8 +33,8 @@ Object Oriented Programming and Imperative Programming by modularizing crosscutt
 In this paper we present a compiler called AspectJ that extends
 the Java language with a new abstraction unit called the aspect. We will present the
 how crosscutting concerns can be declared, first by showing the new constructs that support
-the declaration of certain points of execution in the program, called the joint points, and the
-advices, which associate a body of code to joint points. AspectJ implements aspects by weaving advice
+the declaration of certain points of execution in the program, called the join points, and the
+advices, which associate a body of code to join points. AspectJ implements aspects by weaving advice
 code into standard code and then by compiling the result into JVM byte-code that can be
 executed by any implementation of the JVM.
  
@@ -51,13 +51,13 @@ the code less clean by obfuscating the important program logic. \emph{Aspect Ori
 with the introduction of the \emph{aspect} abstraction, where crosscutting concerns can be captured.
 
 This paper presents the AspectJ compiler, an implementation of AOP for the Java language. This tool allows the declaration
-of aspects as a class-like abstraction, where we can define the \emph{joint points} of the program and the corresponding
-\emph{advice} declarations with the code that must be weaved into the program. AspectJ support for either static or dynamic joint points,
-and offers several ways of declaring \emph{pointcuts}, which are groups of joint points.
+of aspects as a class-like abstraction, where we can define the \emph{join points} of the program and the corresponding
+\emph{advice} declarations with the code that must be weaved into the program. AspectJ support for either static or dynamic join points,
+and offers several ways of declaring \emph{pointcuts}, which are groups of join points.
 We believe that the main advantage of AspectJ is bringing AOP to a very popular programming language and therefore to the average programmer.
 
 The rest of the paper is organized as follows. First, we present the concepts behind AOP. Next, we present
-AspectJ itself, first by showing instructions in how to use and install the compiler and then by presenting the \emph{joint point model},
+AspectJ itself, first by showing instructions in how to use and install the compiler and then by presenting the \emph{join point model},
 that is, how the different components of aspects, such as pointcuts and advices, can be declared. With a good knowledge
 of Aspect we then present a concrete use case, showing the potential of AOP and AspectJ. Finally, we present the technical details
 behind this tool and we end by outlining some conclusions.
@@ -77,9 +77,9 @@ and they allow the programmer to easily develop, maintain and reuse crosscutting
 secundary concerns into a single, identificable place, aspects keep the main program logic cleaner and more easily
 understable, without irrelevant details.
 
-In AOP languages or language extensions, the aspect abstraction is defined by a \emph{joint point model}.
+In AOP languages or language extensions, the aspect abstraction is defined by a \emph{join point model}.
 This model is composed of several concepts: well-defined points in the execution of the program,
-called \emph{join points}; groups of joint points called \emph{pointcuts}; and method-like constructs used to
+called \emph{join points}; groups of join points called \emph{pointcuts}; and method-like constructs used to
 implement the crosscutting concerns, called the \emph{advices}. An aspect is thus an unit of modular
 crosscutting implementation that is composed of pointcuts and the corresponding advices. By allowing the
 use of pointcuts to describe certain points in the code, we can associate advices, thus allowing the execution
@@ -102,7 +102,7 @@ AspectJ was designed to answer these concerns. In order to facilitate its adopti
 
 These two principles set the road for how will the programmer use AspectJ. In typical Java projects, in order to compile the code, \textit{javac} is used. In AspectJ projects \textit{ajc} will be used. However, \textit{ajc} is not in truth a new compiler technology, but a copy of the Eclipse compiler with extensions to support the AspectJ language. 
 
-These extensions are the main components of the joint point model which we will later describe.
+These extensions are the main components of the join point model which we will later describe.
 
 \subsection{Installation}
 
@@ -136,7 +136,7 @@ Once built, the project will run on any JVM (according to version). You need how
 
 This method allows the developer to use an already compiled application and add the new aspects into a new application without recompiling previous code. This way, source code is not required in order to add aspects to an application. This is only possible due to AspectJ's bytecode transformation properties instead of source transformation.
 
-\subsection{Joint Point Model}
+\subsection{Join Point Model}
 
 In AOP, the join point model provides the common frame of reference that makes it possible for the execution of a program's aspect and non-aspect code to be properly coordinated~\cite{Kiczales97aspect-orientedprogramming}. As such, in AspectJ, crosscutting elements are defined by join points which represent well-defined points in the execution of the program. In order to do this, the AspectJ compiler can find places in the source code where some predefined operation are executed. 
 
@@ -154,7 +154,7 @@ In order to detect these join points, AspectJ defines in its grammar a syntactic
 
 \subsubsection{Pointcut designator}
 
-A pointcut designator can be composed of several join points in addition to values inherent to the execution context of those joint points~\cite{Kiczales97aspect-orientedprogramming}. In AspectJ, it is possible to implement two types of pointcuts: \textit{primitive pointcuts} and \textit{user-defined pointcuts}.
+A pointcut designator can be composed of several join points in addition to values inherent to the execution context of those join points~\cite{Kiczales97aspect-orientedprogramming}. In AspectJ, it is possible to implement two types of pointcuts: \textit{primitive pointcuts} and \textit{user-defined pointcuts}.
 
 Primitive pointcuts are used to identify the previously declared join points supported by AspectJ. Some relevant examples are: \texttt{execute(method)} - to identify whenever a given method is executed; \texttt{instanceof(object)} - matches if the object type is an instance of \texttt{myobject}; or \texttt{initializations(type)} - match all classes or object that possess the same specified type.
 
@@ -216,7 +216,7 @@ inserting the advice code directly into the pointcuts before compilation. This h
 allowing the compiler to catch errors earlier and increasing the efficiency of the final program.
 
 Code not affected by aspects is compiled as traditional code, while code where advices apply are
-transformed to insert static points corresponding to the dynamic joint points.
+transformed to insert static points corresponding to the dynamic join points.
 For pointcut descriptors like \texttt{cflow} or \texttt{instanceof}, the weaver must insert
 code at the static points for runtime checking.
 
