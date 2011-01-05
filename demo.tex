@@ -146,11 +146,18 @@ In order to detect these join points, AspectJ defines in its grammar a syntactic
 
 A pointcut designator can be composed of several join points in addition to values inherent to the execution context of those join points~\cite{Kiczales97aspect-orientedprogramming}. In AspectJ, it is possible to implement two types of pointcuts: \textit{primitive pointcuts} and \textit{user-defined pointcuts}.
 
-Primitive pointcuts are used to identify the previously declared join points supported by AspectJ. Some relevant examples are: \texttt{execute(method)} - to identify whenever a given method is executed; \texttt{instanceof(object)} - matches if the object type is an instance of \texttt{myobject}; or \texttt{initializations(type)} - match all classes or object that possess the same specified type.
+Primitive pointcuts are used to identify the previously declared join points supported by AspectJ. Some relevant examples are: \texttt{execute(method)} - to identify whenever a given method is executed; \texttt{instanceof(object)} - matches if the object type is an instance of \texttt{myobject};
+\texttt{cflow(pts)} - matches all joint points that are strictly within the dynamic extent of the join points matched by \texttt{pts}; or \texttt{initializations(type)} - match all classes or object that possess the same specified type.
+Primitive pointcuts describe either \emph{dynamic joinpoints}, which require runtime checking to be executed (examples: \texttt{instanceof} or \texttt{cflow}), or \emph{static joinpoints}, that do not require runtime checking at all.
 
-User-defined pointcuts define new pointcut designators. The following example shows the declaration of a new pointcut called \textit{printHello} that uses the primitive pointcut \textit{execute}: 
+User-defined pointcuts define new pointcut designators using combinations of primitive or user-defined pointcuts with several special operators that
+can be applied to pointcut descriptors, such as \texttt{||} (logical or), \texttt{!} (logical not) and \texttt{\&\&} (logical and).
+The following example shows the declaration of a new pointcut called \textit{printHello} that uses the primitive pointcut \textit{execute}: 
 
-\verb!pointcut printHello() : execute (* print(..));!
+\verb!pointcut printHello() : execute (* print(..)) || execute(* write(..));!
+
+Finally, it is also possible to access data that is in the execution context of the join points. In user-defined pointcut declarations values can
+be expressed by a combination of positional and name matching and then can be used and manipulated in advices. 
 
 \subsubsection{Advice}
 
@@ -159,7 +166,7 @@ An advice defines the code that will run at certain join points when picked out 
 \begin{itemize}
 \item \textit{after} - the goal of the after advice is to execute its body after the corresponding join point;
 \item \textit{before} - the advice's body is executed before the join point picked by its pointcut is reached;
-\item \textit{around} - the around advice enables the developer to replace the join point with an arbitrary code.
+\item \textit{around} - the around advice enables the developer to replace the join point with an arbitrary code. The statement \texttt{proceed()} can be used to indicate that the replaced join point code can be executed.
 \end{itemize}
 
 Using them, the programmer may define when will the code run according to the corresponding pointcut. Following is an example of an advice using the \textit{after} statement:
