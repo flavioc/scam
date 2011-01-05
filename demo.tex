@@ -14,8 +14,8 @@ Carlos Pereira\\
 % 2nd. author
 \alignauthor
 Flavio Cruz\\
-       \affaddr{Faculdade de Ciencias da Universidade do Porto}\\
-       \email{flaviocruz@gmail.com}
+       \affaddr{Center for Research in Advanced Computing Systems, Faculdade de Ciencias da Universidade do Porto}\\
+       \email{flavioc@dcc.fc.up.pt}
 }
 % There's nothing stopping you putting the seventh, eighth, etc.
 % author on the opening page (as the 'third row') but we ask,
@@ -29,8 +29,8 @@ Flavio Cruz\\
 \maketitle
 \begin{abstract}
 Aspect Oriented Programming (AOP) is a new paradigm that tries to solve several problems of
-Object Oriented Programming and Imperative Programming by modularizing crosscutting concerns.
-In this paper we present a compiler called AspectJ that extends
+current programming paradigms by modularizing crosscutting concerns.
+In this paper we present a compiler named AspectJ that extends
 the Java language with a new abstraction unit called the aspect. We will present the
 how crosscutting concerns can be declared, first by showing the new constructs that support
 the declaration of certain points of execution in the program, called the join points, and the
@@ -44,32 +44,27 @@ executed by any implementation of the JVM.
 
 \section{Introduction}
 
-Several paradigms such as \emph{Imperative Programming} and \emph{Object Oriented Programming} (OOP) were put forward in the last few years
-to combat complexity in software systems by means of abstractions such as classes or methods. While these abstractions enable
-more and more modularization of the system functionality, several concerns crosscut several modules of a program and make
+While recent software abstractions like classes or functions enable
+more modularization of the system functionality, several concerns crosscut several modules of a program and make
 the code less clean by obfuscating the important program logic. \emph{Aspect Oriented Programming} tries to solve this
 with the introduction of the \emph{aspect} abstraction, where crosscutting concerns can be captured.
 
-This paper presents the AspectJ compiler, an implementation of AOP for the Java language. This tool allows the declaration
-of aspects as a class-like abstraction, where we can define the \emph{join points} of the program and the corresponding
+We present the AspectJ compiler, an implementation of AOP for the Java language that allows the declaration
+of aspects as a class-like abstraction. Each aspect defines the \emph{join points} of the program and the corresponding
 \emph{advice} declarations with the code that must be weaved into the program. AspectJ support for either static or dynamic join points,
 and offers several ways of declaring \emph{pointcuts}, which are groups of join points.
-We believe that the main advantage of AspectJ is bringing AOP to a very popular programming language and therefore to the average programmer.
-
-The rest of the paper is organized as follows. First, we present the concepts behind AOP. Next, we present
-AspectJ itself, first by showing instructions in how to use and install the compiler and then by presenting the \emph{join point model},
-that is, how the different components of aspects, such as pointcuts and advices, can be declared. With a good knowledge
-of Aspect we then present a concrete use case, showing the potential of AOP and AspectJ. Finally, we present the technical details
-behind this tool and we end by outlining some conclusions.
+In the next sections, we present the concepts behind AOP, followed by
+AspectJ itself and its \emph{join point model}. Finally, we present the technical details
+behind AspectJ and we outline some conclusions.
 
 \section{Aspect Oriented Programming}
 
-\emph{Aspect Oriented Programming} (AOP) is a new programming paradigm that tries to tackle some problems
-found in imperative and object oriented (OOP) paradigms \cite{Kiczales97aspect-orientedprogramming}. While those paradigms have made great progress towards
-making software more modular and composable, they are unable to modularize and deal with \emph{crosscutting concerns}.
+\emph{Aspect Oriented Programming} (AOP) tries to tackle the problem of \emph{crosscutting concerns}
+that is found in imperative and object oriented (OOP) paradigms \cite{Kiczales97aspect-orientedprogramming}.
 These concerns defy well-known abstractions like classes, methods and functions and crosscut the
 natural modularity present in the implementation of complex systems by being dispersed
 across multiple classes or methods. \cite{Kiczales01anoverview}
+
 
 The objective of AOP is to provide new means of abstraction that can explicitly capture crosscutting concerns
 and separate them from the \emph{core concerns}. These new abstractions are usually called \emph{aspects}
@@ -87,29 +82,24 @@ of secundary code at specific parts of the program (for example, before the exec
 
 \section{Aspect J}
 
-AspectJ was a project of research at Xerox Palo Alto Research Center, funded by Xerox, a U.S. Government grant (NISTATP), and a DARPA contract. It has since evolved through open-source releases to a strong user community and now operates as an open source project \cite{AspectJ}.
-
 AspectJ is based on the AOP paradigm, aiming to help the developer by adding constructs to Java that enable the modular implementation of crosscutting concerns. Additionally it aims for code modularity and reusability.
-
-In normal Java, it may be difficult to modularize some parts of the system like error-handling, testing, logging, persistence, to state a few. Normally, this kind of code tends to be spread out across the system, making future changes or additions difficult to perform. 
-
-AspectJ was designed to answer these concerns. In order to facilitate its adoption by the programmers community, it is defined upholding two main properties \cite{Kiczales97aspect-orientedprogramming}:
+In order to facilitate its adoption by the programmers community, it is defined upholding two main properties \cite{Kiczales97aspect-orientedprogramming}:
 
 \begin{itemize}
 \item \textit{Upward compatibility} - all legal Java programs must be legal AspectJ programs;
 \item \textit{Platform compatibility} - all legal AspectJ programs must run on standard Java virtual machines. 
 \end{itemize}
 
-These two principles set the road for how will the programmer use AspectJ. In typical Java projects, in order to compile the code, \textit{javac} is used. In AspectJ projects \textit{ajc} will be used. However, \textit{ajc} is not in truth a new compiler technology, but a copy of the Eclipse compiler with extensions to support the AspectJ language. 
-
-These extensions are the main components of the join point model which we will later describe.
+We have developed \textit{ajc}, a compiler that recognizes the new language extensions.
+However, \textit{ajc} is not in truth a new compiler technology, but an extension to the Java compiler
+that performs several program transformations - \emph{aspect weaving} - and generates standard JVM byte-code.
 
 \subsection{Installation}
 
 The installation of AspectJ can be done by downloading the AspectJ binary at \url{http://eclipse.org/aspectj/downloads.php}. 
 The AspectJ Development Tools which provides Eclipse platform based tool support for AOSD with AspectJ, is also available at \url{http://eclipse.org/ajdt/}. AJDT provides the user with a lot of functionalities, including code highlighting, indication of sections on the code where advices will be introduced, among others. Despite its usefulness, the utilization of AJDT is not on the scope of this paper.
 
-The installation of AspectJ includes the AspectJ compiler, browser, documentation tool and Ant tasks. Most of these are included in the \textsc{aspectjtools.jar}. The main classes required to use AspectJ however, are included in the \textsc{aspectjrt.jar}. To install these two libraries, it is necessary to execute the downloaded \textsc{AspectJ.jar} using java:
+The installation of AspectJ includes the \textit{ajc} compiler, browser, documentation tool and Ant tasks. Most of these are included in the \textsc{aspectjtools.jar}. The runtime classes required to use AspectJ however, are included in the \textsc{aspectjrt.jar}. To install these two libraries, it is necessary to execute the downloaded \textsc{AspectJ.jar} using java:
 
 \verb!java -jar aspectj.jar!
 
@@ -138,7 +128,7 @@ This method allows the developer to use an already compiled application and add 
 
 \subsection{Join Point Model}
 
-In AOP, the join point model provides the common frame of reference that makes it possible for the execution of a program's aspect and non-aspect code to be properly coordinated~\cite{Kiczales97aspect-orientedprogramming}. As such, in AspectJ, crosscutting elements are defined by join points which represent well-defined points in the execution of the program. In order to do this, the AspectJ compiler can find places in the source code where some predefined operation are executed. 
+In AOP, the join point model provides the common frame of reference that makes it possible for the execution of a program's aspect and non-aspect code to be properly coordinated~\cite{Kiczales97aspect-orientedprogramming}. As such, in AspectJ, crosscutting elements are defined by join points which represent well-defined points in the execution of the program. In order to do this, the AspectJ compiler can find places in the source code where some predefined operation is executed. 
 
 AspectJ can possibly detect and operate on the following kinds of join points~\cite{Kiselev2002}: 
 \begin{itemize}
@@ -228,7 +218,10 @@ without costly runtime mechanisms.
 
 \section{Conclusions}
 
-As tipicas conclusoes \cite{Kiczales97aspect-orientedprogramming}
+In this paper, we presented the AspectJ compiler, an AOP extension and compiler to the Java language.
+We presented the most important aspects of the join point model found in AspectJ and how it can be used
+to define aspects. Finally, we gave some information in how the weaving of aspects is done in order to
+generate standard JVM byte-code.
 
 \bibliographystyle{abbrv}
 \bibliography{refs}
