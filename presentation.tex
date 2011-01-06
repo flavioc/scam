@@ -2,7 +2,10 @@
 %\documentclass[handout,t]{beamer}
 
 \batchmode
-% \usepackage{pgfpages}
+\usepackage[svgnames]{}
+\usepackage{pgfpages}
+\usepackage{listings}
+\usepackage{relsize}
 % \pgfpagesuselayout{4 on 1}[letterpaper,landscape,border shrink=5mm]
 
 \usepackage{amsmath,amssymb,enumerate,epsfig,bbm,calc,color,ifthen,capt-of}
@@ -10,12 +13,12 @@
 \usepackage[utf8]{inputenc}
 
 \usetheme{Berlin}
-\usecolortheme{bear}
+%\usecolortheme{bear}
 
 \title{AspectJ: An Approach to AOP}
 \author{Carlos Pereira \and Flávio Cruz}
 
-\date{17 Dezembro 2010}
+\date{January the 17th, 2010}
 
 \institute[Source Code Analysis and Manipulation]{Source Code Analysis and Manipulation}
 
@@ -34,43 +37,67 @@
   \tableofcontents
 \end{frame}
 
-% -----------------------------INTRODUCTION------------------------------------------------
-\section{Introduction}
-\subsection*{Introduction}
-
-\begin{frame}{Slide 1...abstract/introduction related...}
-\begin{itemize}
-\item ...
-\item \textcolor{red}{...}
-\end{itemize}
-
-\begin{block}{Block 1}  
-... text ...
-\end{block}
-\end{frame}
-
 %----------------------------AOP----------------------------------------------------
 \section{Aspect Oriented Programming}
 \subsection*{Aspect Oriented Programming}
 
 \begin{frame}{Aspect Oriented Programming}
 \begin{itemize}
-\item ...
+\item AOP tries to tackle the problem of \emph{crosscutting concerns}  that is usually found in paradigms such as Object Oriented Programming (OOP) and Imperative Programming
+\item These concerns defy well-known abstractions like classes, methods or functions
+\item They crosscut the natural modularity present in the implementation of complex systems because they tend to be dispersed in several modular units
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Crosscutting Concerns}
+\begin{frame}{Crosscutting concerns}
 \begin{itemize}
-\item ...
+   \item Crosscutting concerns result in code duplication and scattering making the understanding of a code-base much harder
+   \item This is a violation of a golden rule in software engineering: separation of concerns
+   \item Moreover, the main program logic gets lost in the middle of code that is not very important to the understanding of a system
+   \item Examples of crosscutting concerns are:
+      \begin{itemize}
+         \item Logging
+         \item Authentication
+         \item Resource management: memory, files ...
+         \item Event dispatching and handling
+      \end{itemize}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{AOP concepts...advantages...}
+\begin{frame}{Objectives of AOP}
 \begin{itemize}
-\item ...
+\item Provide new means of abstraction that can explicitly capture crosscutting concerns
+\item ... and separate them from the \emph{core concerns}
+\item This abstraction is called the \emph{aspect} and enables the programmer to
+   \begin{itemize}
+      \item \textbf{Develop} crosscutting concerns
+      \item \textbf{Maintain} crosscutting concerns easily in one place
+      \item \textbf{Reuse} crosscutting concerns
+   \end{itemize}
+\item With aspects, the programmer can focus on the core concerns and deal with crosscutting concerns in a modular way
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Join Point Model}
+\begin{itemize}
+   \item In AOP based languages, the aspect abstraction is defined by a \emph{join point model}
+   \item This model is composed of several concepts:
+      \begin{itemize}
+         \item \emph{Join points}: well-defined points in the execution of the program
+         \item \emph{Pointcuts}: groups of joint points
+         \item \emph{Advices}: method-like constructs used to implement the crosscutting concerns
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Joint Point Model}
+\begin{itemize}
+   \item An aspect is thus an unit of modular crosscutting implementation that is composed of pointcuts and
+the corresponding advices
+   \item We can thus use pointcuts associated with advices to allow the execution of secondary code at specific parts of the program
+   \item The process of "mixing" standard code with aspects is called \emph{aspect weaving}
+\end{itemize}
+\end{frame}
 
 %----------------------------AspectJ-------------------------------------------------------------------------------
 \section{AspectJ}
@@ -96,7 +123,7 @@
 \begin{columns}
 \column{0.55\textwidth}
 \begin{itemize}
-\item Collumn 1
+\item Column 1
 \end{itemize}
 
 \column{0.45\textwidth}
@@ -124,6 +151,33 @@
 \end{itemize}
 \end{frame}
 
+%------------------------------Technical Details-----------------------------------------------------
+\section{Technical Details}
+\subsection{Technical Details}
+
+\begin{frame}{Technical Details}
+\begin{itemize}
+   \item Being mostly a specification, AspectJ does not enforce any particular implementation strategy
+   \item However, the tool itself tries to do most of the aspect weaving during compile time
+   \item This allows the compiler to catch errors earlier and increase runtime efficiency
+   \item Code unaffected by aspects is compiled as usual, while code where advices apply is transformed
+   to include static points that correspond to the dynamic join points
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Technical Details}
+\begin{itemize}
+   \item Before and after advices are compiled as standard methods and are called in the static points
+   \item Around advices are compiled into multiple methods, one for each static point in the code.
+   \begin{itemize}
+      \item This increases code size but increases runtime efficiency since it is faster to access data through the call stack
+      \item The \texttt{proceed} statement is much easier to implement
+   \end{itemize}
+   \item Dynamic checks are used for dynamic join points
+   \item Resulting byte-code is can be executed in any JVM.
+\end{itemize}
+\end{frame}
+
 %------------------------------Video (?)-------------------------------------------------------------
 \section{Demonstration}
 \subsection*{Demonstration}
@@ -138,11 +192,237 @@ Topics on the video:
 \end{itemize}
 \end{frame}
 
+\begin{frame}{Uses of AOP}
+\begin{itemize}
+   \item As we know from previous information, AOP is used to tackle the problem of crosscutting concerns
+   \item Obviously, AOP is good for things like execution tracing, logging, authentication, etc
+   \item With execution tracing it is possible to make debugging easier since debug code is not mixed with everything else
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Uses of AOP}
+\begin{itemize}
+   \item Another good use of AOP is to implement the so-called \emph{design by contract} or \emph{defensive programming}
+   \begin{itemize}
+      \item Things like invariants, preconditions or post conditions are easily implementable using aspects
+      \item They make sure that the function is receiving the right inputs and generating the right outputs - useful for testing
+   \end{itemize}
+   \item AOP is also notably good to make clear and concise implementations of some design patterns
+      \begin{itemize}
+         \item Adapter
+         \item Observer
+         \item ...
+         \item A researcher noted that 17 out of the 23 GoF patterns exhibited some degree of crosscutting
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Observer Pattern}
+\begin{frame}{Observer Pattern}
+\begin{itemize}
+   \item This is one of the GoF patterns
+   \item An object, called the subject, keeps a list of observers
+   \item When something in the subject changes, the subject notifies, automatically, all its observers
+   \item This pattern is used to implement distributed event handling systems
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Observer Pattern}
+\begin{itemize}
+   \item Let's implement the Observer Pattern in a drawing system:
+      \begin{itemize}
+         \item Observer: \texttt{Display}
+         \item Subject: \texttt{Shape}
+      \end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Coord}
+   {\small
+   \begin{lstlisting}[language=java]
+   public class Coord
+   {
+      public int x, y;
+
+      public Coord(int _x, int _y) {
+         x = _x;
+         y = _y;
+      }
+
+      public String toString() {
+         return "(" + x + ", " + y + ")";
+      }
+   }
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Shape}
+   {\footnotesize
+      \begin{lstlisting}[language=java]
+public abstract class Shape
+{
+   public abstract void draw(Coord coord);
+}
+      \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Square}
+   {\footnotesize
+   \begin{lstlisting}[language=java]
+public class Square extends Shape
+{
+  private int side;
+
+  public Square(int _side) {
+    side = _side;
+  }
+
+  public void draw(Coord coord) {
+    System.out.println("Drawing square(side="
+          + side + ") in " + coord);
+  }
+}
+   \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Circle}
+   {\footnotesize
+   \begin{lstlisting}[language=java]
+public class Circle extends Shape
+{
+  private int radius;
+
+  public Circle(int _radius) {
+    radius = _radius;
+  }
+
+  public void draw(Coord coord) {
+    System.out.println("Drawing a circle(radius=" +
+               radius + ") in " + coord);
+  }
+}
+   \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Display}
+   {\footnotesize
+   \begin{lstlisting}[language=java]
+public class Display
+{
+  public Display() {
+  }
+
+  public void update() {
+    System.out.println("Updating display...");
+  }
+}
+   \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - ObserverPattern}
+   {\tiny
+   \begin{lstlisting}[language=java]
+public abstract aspect ObserverPattern perthis(subjectConstructed(Subject))
+{
+  public interface Observer {}
+  public interface Subject {}
+
+  private Vector observers = new Vector();
+  public void addObserver(Observer o) {
+    observers.add(o);
+  }
+
+  protected pointcut subjectConstructed(Subject s) :
+    this(s) && execution(Subject+.new(..));
+
+  abstract protected pointcut subjectChanged(Subject s);
+  after(Subject s) : subjectChanged(s) {
+    Iterator itr = observers.iterator();
+    while(itr.hasNext()) {
+      updateObserver((Observer)itr.next(), s);
+    }
+  }
+
+  public abstract void updateObserver(Observer o, Subject s);
+}
+   \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - ShapeObserverPattern}
+   {\footnotesize
+   \begin{lstlisting}[language=java]
+public aspect ShapeObserverPattern extends ObserverPattern
+{
+  declare parents: Shape implements Subject;
+  declare parents: Display implements Observer;
+
+  protected pointcut subjectChanged(Subject s) :
+    this(s) && execution(void Shape.draw(Coord));
+
+  public void updateObserver(Observer o, Subject s) {
+    ((Display)o).update();
+  }
+}
+   \end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Now to the main program}
+   {\scriptsize
+\begin{lstlisting}[language=java]
+public class Main
+{
+  public static void main(String[] args) {
+   Display display = new Display();
+   Square sq = new Square(2);
+   Circle circle = new Circle(5);
+
+   ShapeObserverPattern.aspectOf(sq).addObserver(display);
+   ShapeObserverPattern.aspectOf(circle).addObserver(display);
+
+   sq.draw(new Coord(0, 0));
+   circle.draw(new Coord(10, 5));
+  }
+}
+\end{lstlisting}
+   }
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Observer - Execution}
+   {\scriptsize
+\begin{lstlisting}
+$ ajc Coord.java Display.java \
+      Shape.java Square.java Circle.java \
+      ObserverPattern.java ShapeObserverPattern.java \
+      Main.java
+$ java Main
+Drawing square(side=2) in (0, 0)
+Updating display...
+Drawing a circle(radius=5) in (10, 5)
+Updating display...
+$
+\end{lstlisting}
+   }
+\end{frame}
 
 % -----------------------------Conclusions-----------------------------------------------------------------------
-\section{Conclusion}
+\section{Conclusions}
 \subsection*{}
-\begin{frame}{Conclusion}
+\begin{frame}{Conclusions}
 \begin{itemize}
 \item ...
 \end{itemize}
