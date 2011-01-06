@@ -10,6 +10,6 @@ public class Circle extends Shape
 
 	public void draw(Coord coord)
 	{
-		System.out.println("Drawing a circle of radius " + radius + " in " + coord);
+		System.out.println("Drawing a circle(radius=" + radius + ") in " + coord);
 	}
 }

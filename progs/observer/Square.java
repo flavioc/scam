@@ -10,6 +10,6 @@ public class Square extends Shape
 
 	public void draw(Coord coord)
 	{
-		System.out.println("Drawing square with side=" + side + " in " + coord);
+		System.out.println("Drawing square(side=" + side + ") in " + coord);
 	}
 }
