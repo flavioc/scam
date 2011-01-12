@@ -545,6 +545,209 @@ $
    }
 \end{frame}
 
+\subsection*{Programming by Contract}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract}
+   \begin{itemize}
+      \item Let's see another AspectJ example, now for defensive programming / programming by contract.
+   \end{itemize}
+   {\scriptsize
+   \begin{lstlisting}[language=java]
+public class Customer {
+}
+
+public class CompanySystem {
+   Customer getCustomer(String name) {
+      return new Customer();
+   }
+}
+   \end{lstlisting}}
+   
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - ContractBrokeException}
+{\scriptsize
+\begin{lstlisting}[language=java]
+public class ContractBrokeException extends RuntimeException {
+  public ContractBrokeException(String arg0) {
+    super(arg0);
+  }
+
+  public ContractBrokeException(Throwable arg0) {
+    super(arg0);
+  }
+
+  public ContractBrokeException(String arg0, Throwable arg1) {
+    super(arg0, arg1);
+  }
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - AbstractContract}
+{\scriptsize
+\begin{lstlisting}[language=java]
+public abstract aspect AbstractContract {
+  public abstract pointcut targetPointcut();
+
+  public abstract ContractManager getContractManager();
+
+  Object around(): targetPointcut() {
+    ContractManager manager = getContractManager();
+    System.out.println("Checking contract with " +
+        manager.getClass().getName());
+
+    if(manager != null) {
+      System.out.println("Initial invariants check");
+      manager.checkInvariants(thisJoinPoint.getTarget());
+
+      System.out.println("Pre-conditions check");
+      manager.checkPreConditions(thisJoinPoint.getTarget(),
+          thisJoinPoint.getArgs());
+    }
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - AbstractContract}
+{\scriptsize
+\begin{lstlisting}[language=java]
+    Object obj = proceed();
+
+    if(manager != null) {
+      System.out.println("Post-conditions check");
+      manager.checkPostConditions(thisJoinPoint.getTarget(),
+          obj, thisJoinPoint.getArgs());
+
+      System.out.println("Final invariants check");
+      manager.checkInvariants(thisJoinPoint.getTarget());
+    }
+    return obj;
+  }
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - ContractManager}
+{\tiny
+\begin{lstlisting}[language=java]
+public interface ContractManager
+{
+  public void checkPreConditions(Object thisObject, Object[] args)
+    throws ContractBrokeException;
+
+  public void checkPostConditions(Object thisObject, Object returnValue,
+      Object[] args)
+    throws ContractBrokeException;
+
+  public void checkInvariants(Object thisObject) throws ContractBrokeException;
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - CompanySystemContractManager}
+{\tiny
+\begin{lstlisting}[language=java]
+public class CompanySystemContractManager implements ContractManager {
+  public void checkPreConditions(Object thisObject, Object[] args)
+    throws ContractBrokeException {
+    if(args[0] == null)
+      throw new ContractBrokeException("Pre Error: argument must be non-null");
+  }
+
+  public void checkPostConditions(Object thisObject, Object value,
+      Object[] args) throws ContractBrokeException {
+    if(value == null)
+      throw new ContractBrokeException("Post Error: return value must be non-null");
+  }
+
+  public void checkInvariants(Object thisObject) throws ContractBrokeException {
+  }
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - ContractCompanySystem}
+{\scriptsize
+\begin{lstlisting}[language=java]
+public aspect ContractCompanySystem extends AbstractContract {
+  public pointcut targetPointcut():
+      call(Customer CompanySystem.getCustomer(String));
+
+  public ContractManager getContractManager() {
+    return new CompanySystemContractManager();
+  }
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - Main}
+{\scriptsize
+\begin{lstlisting}[language=java]
+public class Main {
+  public static void main(String[] args) {
+    CompanySystem csystem = new CompanySystem();
+    Customer customer = csystem.getCustomer("joe");
+  }
+}
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - Compilation}
+{\scriptsize
+\begin{lstlisting}
+$ ajc Customer.java CompanySystem.java \
+      AbstractContract.java   \
+      ContractManager.java \
+      ContractBrokeException.java \
+      CompanySystemContractManager.java \
+      ContractCompanySystem.java \
+      Main.java
+$ 
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - Success}
+{\scriptsize
+\begin{lstlisting}
+$ java Main
+Checking contract with CompanySystemContractManager
+Initial invariants check
+Pre-conditions check
+Post-conditions check
+Final invariants check
+$ 
+\end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Programming by Contract - Failure}
+{\scriptsize
+\begin{lstlisting}
+$ java Main
+Checking contract with CompanySystemContractManager
+Initial invariants check
+Pre-conditions check
+Post-conditions check
+Exception in thread "main" ContractBrokeException:
+      Post Error: return value must be non-null
+	at CompanySystemContractManager.checkPostConditions(
+	   CompanySystemContractManager.java:12)
+	at Main.getCustomer_aroundBody1$advice(Main.java:25)
+	at Main.main(Main.java:5)
+$ 
+\end{lstlisting}}
+\end{frame}
+
 %------------------------------Technical Details-----------------------------------------------------
 
 \section{Technical Details}
