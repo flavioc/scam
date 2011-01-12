@@ -30,7 +30,6 @@
 
 \frame{\titlepage}
 
-
 \section[Summary]{}
 \subsection*{}
 \begin{frame}{Summary}
@@ -103,57 +102,171 @@ the corresponding advices
 \section{AspectJ}
 \subsection*{AspectJ}
 
-\begin{frame}{AspectJ bio...}
-\begin{itemize}
-\item ...
-\end{itemize}
+\begin{frame}{AspectJ}
+  \begin{itemize}
+    \item AspectJ is the Java implementation of AOP.
+    \item Extends the Java grammar by adding constructs that enable the modular implementation of crosscutting concerns.
+    \item Upholds two main properties:
+    \begin{itemize}
+    	\item \emph{Upward compatibility} - all legal Java programs must be leval AspectJ programs.
+      	\item \emph{Platform compatibility} - all legal AspectJ programs must run on standard Java virtual machines.
+     \end{itemize}
+  \end{itemize}
 \end{frame}
 
-\begin{frame}{Compiler Details (?) - ajc}
-\begin{itemize}
-\item ...
-\end{itemize}
+\begin{frame}{Ajc}
+  \begin{itemize}
+    \item Ajc is the AspectJ compiler/weaver
+    \item A weaver needs to ``link'' together classes and aspects so that advice gets executed,
+inter-type declarations affect the static structure, and weave-time declarations produce
+warnings and errors.
+    \item AspectJ offers three weaving models:
+    \begin{itemize}
+      \item Source weaving
+      \item Binary weaving
+      \item Load-time weaving
+    \end{itemize}
+  \end{itemize}
 \end{frame}
 
-%---------------------------Join Point Model----------------------------------------------------
+\begin{frame}{Ajc}
+  \begin{itemize}
+    \item \emph{Source weaving} - the input to the weaver consists of classes and
+aspects in source-code form.
+    \item \emph{Binary weaving} - input to the weaver - classes and aspects - is in byte-code form. The
+input byte code is compiled separately using the Java compiler or the AspectJ compiler.
+    \item \emph{Load-time weaving} - takes input in the form of binary classes and aspects, as well as
+aspects and configuration defined in XML format.
+    \item Regardless of the weaving model used, the resulting execution of the system is identical.
+  \end{itemize}
+\end{frame}
+
+%---------------------------Join Point Model in AspectJ----------------------------------------------------
 \section{Join Point Model}
 \subsection*{Join Point Model}
 
 \begin{frame}{Join Point Model}
-\begin{columns}
-\column{0.55\textwidth}
-\begin{itemize}
-\item Column 1
-\end{itemize}
 
-\column{0.45\textwidth}
-\begin{itemize}
-\item Collumn 2
-\end{itemize}
+%Add descriptions of each on comment for reference...
+AspectJ can possibly detect and operate on the following eleven kinds of join points:
+
+\begin{columns}
+  \column{0.55\textwidth}
+  \begin{itemize}
+    \item method call 
+    \item method execution 
+    \item constructor call 
+    \item initializer execution 
+    \item constructor execution 
+    \item static initializer execution 
+  \end{itemize}
+
+  \column{0.45\textwidth}
+  \begin{itemize}
+    \item object preinitialization 
+    \item object initialization 
+    \item field reference 
+    \item field assignment 
+    \item exception handler execution
+  \end{itemize}
 \end{columns}
 \end{frame}
 
 \begin{frame}{Pointcut Designator}
-\begin{itemize}
-\item ...
-\end{itemize}
+  \begin{itemize}
+    \item A pointcut designator can be composed of several join points in addition to values inherent to the execution context of those join points.
+    \item AspectJ allows the implementation of two types of pointcuts: \emph{primitive pointcuts} and \emph{user-defined pointcuts}. 
+    \item Primitive pointcuts are used to identify join points supported by AspectJ. 
+    \item User-defined pointcuts allow the composition of primitive pointcuts. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Primitive Pointcuts}
+  \begin{itemize}
+    \item call(MethodPattern $||$ ConstructorPattern) - 
+    Picks out each method call join point whose signature matches MethodPattern or ConstructorPattern. 
+    \item execution(MethodPattern $||$ ConstructorPattern) -
+    Picks out each method execution join point whose signature matches MethodPattern or ConstructorPattern. 
+    \item get(FieldPattern) - 
+    Picks out each field reference join point whose signature matches FieldPattern. 
+    \item set(FieldPattern) - 
+    Picks out each field set join point whose signature matches FieldPattern. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Primitive Pointcuts}
+  \begin{itemize}
+    \item initialization(ConstructorPattern) -
+    Picks out each object initialization join point whose signature matches ConstructorPattern. 
+    \item preinitialization(ConstructorPattern) -
+    Picks out each object pre-initialization join point whose signature matches ConstructorPattern. 
+    \item handler(TypePattern) -
+    Picks out each exception handler join point whose signature matches TypePattern. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Primitive Pointcuts}
+  \begin{itemize}
+    \item within(TypePattern) -
+    Picks out each join point where the executing code is defined in a type matched by TypePattern. 
+    \item withincode(MethodPattern $||$ ConstructorPattern) -
+    Picks out each join point where the executing code is defined in a method whose signature matches MethodPattern or a Constructor Pattern. 
+    \item cflow(Pointcut) -
+    Picks out each join point in the control flow of any join point P picked out by Pointcut, including P itself. 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Primitive Pointcuts}
+  \begin{itemize}
+    \item this(Type or Id) -
+    Picks out each join point where the currently executing object (the object bound to this) is an instance of Type, or of the type of the identifier Id. 
+    \item target(Type or Id) -
+    Picks out each join point where the target object (the object on which a call or field operation is applied to) is an instance of Type, or of the type of the identifier Id.
+    \item args(Type or Id, ...) -
+    Picks out each join point where the arguments are instances of the appropriate type (or type of the identifier if using that form). 
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{User-defined Pointcuts}
+  \begin{itemize}
+    \item User-defined pointcuts define new pointcut designators using combinations of primitive or user-defined pointcuts.
+    \item Special operator can be applied to the pointcut descriptors, such as \verb!|| (logical or), ! (logical not) and \&\& (logical and)
+  \end{itemize}
+  \begin{block}{An example:}
+    \verb!pointcut pointcutOne() : execute (* methodOne(..)) \&\& execute(* methodTwo(..));
+  \end{block}
 \end{frame}
 
 \begin{frame}{Advice}
-\begin{itemize}
-\item ...
-\end{itemize}
+  \begin{itemize}
+    \item An advice defines what code should run at join points that are picked out by pointcuts.
+    \item An advice can be triggered by named or nameless pointcuts and can have formal parameters that are either provided by the pointcuts or exposed by the advice itself.
+    \item The three basic kinds of advices are \emph{before}, \emph{after}, and \emph{around}.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Advice}
+  \begin{itemize}
+    \item \emph{before} - the advice’s body is executed before the join point picked by its pointcut is reached. 
+    \item \emph{after} - the goal of the after advice is to execute its body after the corresponding join pointing. It is possible to indicate if whether the advice is meant to run if the join point has returned (\emph{after returning}) or if it has thrown an exception (\emph{after throwing}).
+    \item \emph{around} - the around advice enables the developer to replace the join point with an arbitrary code. The statement \emph{proceed()} can be used to indicate that the replaced join point code can be executed.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Aspect}
-\begin{itemize}
-\item ...
-\end{itemize}
+  \begin{itemize}
+    \item Aspects represent the basis for AOP as the principal items for crosscutting implementations on which all the pointcuts and their corresponding advices are declared.
+    \item Aspects can be implemented similarly to Java classes, possessing properties like class extension, interface implementation or inner declarations.
+    \item The AspectJ compiler translates aspects into Java classes.
+  \end{itemize}
 \end{frame}
 
 %------------------------------Technical Details-----------------------------------------------------
+%Não faria mais sentido depois da demonstração? Digo isto apenas porque sucede ao join point model..., e porque após a explicação da sintaxe do aspectj, a (primeira?) demo ficaria bem...
+
 \section{Technical Details}
-\subsection{Technical Details}
+\subsection*{Technical Details}
 
 \begin{frame}{Technical Details}
 \begin{itemize}
@@ -212,12 +325,12 @@ Topics on the video:
          \item Adapter
          \item Observer
          \item ...
-         \item A researcher noted that 17 out of the 23 GoF patterns exhibited some degree of crosscutting
+         \item A researcher noted that 17 out of the 23 GoF patterns exhibited some degree of crosscutting %Design Patterns: Elements of Reusable Object-Oriented Software
       \end{itemize}
 \end{itemize}
 \end{frame}
 
-\subsection{Observer Pattern}
+\subsection*{Observer Pattern}
 \begin{frame}{Observer Pattern}
 \begin{itemize}
    \item This is one of the GoF patterns
