@@ -231,10 +231,10 @@ AspectJ can possibly detect and operate on the following eleven kinds of join po
 \begin{frame}{User-defined Pointcuts}
   \begin{itemize}
     \item User-defined pointcuts define new pointcut designators using combinations of primitive or user-defined pointcuts.
-    \item Special operator can be applied to the pointcut descriptors, such as \verb!|| (logical or), ! (logical not) and \&\& (logical and)
+    \item Special operator can be applied to the pointcut descriptors, such as \texttt{||} (logical or), \texttt{!} (logical not) and \texttt{\&\&} (logical and)
   \end{itemize}
   \begin{block}{An example:}
-    \verb!pointcut pointcutOne() : execute (* methodOne(..)) \&\& execute(* methodTwo(..));
+    \texttt{pointcut pointcutOne() : execute (* methodOne(..)) \&\& execute(* methodTwo(..));}
   \end{block}
 \end{frame}
 
@@ -260,35 +260,6 @@ AspectJ can possibly detect and operate on the following eleven kinds of join po
     \item Aspects can be implemented similarly to Java classes, possessing properties like class extension, interface implementation or inner declarations.
     \item The AspectJ compiler translates aspects into Java classes.
   \end{itemize}
-\end{frame}
-
-%------------------------------Technical Details-----------------------------------------------------
-%Não faria mais sentido depois da demonstração? Digo isto apenas porque sucede ao join point model..., e porque após a explicação da sintaxe do aspectj, a (primeira?) demo ficaria bem...
-
-\section{Technical Details}
-\subsection*{Technical Details}
-
-\begin{frame}{Technical Details}
-\begin{itemize}
-   \item Being mostly a specification, AspectJ does not enforce any particular implementation strategy
-   \item However, the tool itself tries to do most of the aspect weaving during compile time
-   \item This allows the compiler to catch errors earlier and increase runtime efficiency
-   \item Code unaffected by aspects is compiled as usual, while code where advices apply is transformed
-   to include static points that correspond to the dynamic join points
-\end{itemize}
-\end{frame}
-
-\begin{frame}{Technical Details}
-\begin{itemize}
-   \item Before and after advices are compiled as standard methods and are called in the static points
-   \item Around advices are compiled into multiple methods, one for each static point in the code.
-   \begin{itemize}
-      \item This increases code size but increases runtime efficiency since it is faster to access data through the call stack
-      \item The \texttt{proceed} statement is much easier to implement
-   \end{itemize}
-   \item Dynamic checks are used for dynamic join points
-   \item Resulting byte-code is can be executed in any JVM.
-\end{itemize}
 \end{frame}
 
 %------------------------------Video (?)-------------------------------------------------------------
@@ -531,6 +502,35 @@ $
 \end{lstlisting}
    }
 \end{frame}
+
+%------------------------------Technical Details-----------------------------------------------------
+
+\section{Technical Details}
+\subsection*{Technical Details}
+
+\begin{frame}{Technical Details}
+\begin{itemize}
+   \item Being mostly a specification, AspectJ does not enforce any particular implementation strategy
+   \item However, the tool itself tries to do most of the aspect weaving during compile time
+   \item This allows the compiler to catch errors earlier and increase runtime efficiency
+   \item Code unaffected by aspects is compiled as usual, while code where advices apply is transformed
+   to include static points that correspond to the dynamic join points
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Technical Details}
+\begin{itemize}
+   \item Before and after advices are compiled as standard methods and are called in the static points
+   \item Around advices are compiled into multiple methods, one for each static point in the code.
+   \begin{itemize}
+      \item This increases code size but increases runtime efficiency since it is faster to access data through the call stack
+      \item The \texttt{proceed} statement is much easier to implement
+   \end{itemize}
+   \item Dynamic checks are used for dynamic join points
+   \item Resulting byte-code is can be executed in any JVM.
+\end{itemize}
+\end{frame}
+
 
 % -----------------------------Conclusions-----------------------------------------------------------------------
 \section{Conclusions}
