@@ -183,46 +183,46 @@ AspectJ can possibly detect and operate on the following eleven kinds of join po
 
 \begin{frame}{Primitive Pointcuts}
   \begin{itemize}
-    \item call(MethodPattern $||$ ConstructorPattern) - 
+    \item \texttt{call(MethodPattern $||$ ConstructorPattern)}: 
     Picks out each method call join point whose signature matches MethodPattern or ConstructorPattern. 
-    \item execution(MethodPattern $||$ ConstructorPattern) -
+    \item \texttt{execution(MethodPattern $||$ ConstructorPattern)}:
     Picks out each method execution join point whose signature matches MethodPattern or ConstructorPattern. 
-    \item get(FieldPattern) - 
+    \item \texttt{get(FieldPattern)}: 
     Picks out each field reference join point whose signature matches FieldPattern. 
-    \item set(FieldPattern) - 
+    \item \texttt{set(FieldPattern)}:
     Picks out each field set join point whose signature matches FieldPattern. 
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Primitive Pointcuts}
   \begin{itemize}
-    \item initialization(ConstructorPattern) -
+    \item \texttt{initialization(ConstructorPattern)}:
     Picks out each object initialization join point whose signature matches ConstructorPattern. 
-    \item preinitialization(ConstructorPattern) -
+    \item \texttt{preinitialization(ConstructorPattern)}:
     Picks out each object pre-initialization join point whose signature matches ConstructorPattern. 
-    \item handler(TypePattern) -
+    \item \texttt{handler(TypePattern)}:
     Picks out each exception handler join point whose signature matches TypePattern. 
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Primitive Pointcuts}
   \begin{itemize}
-    \item within(TypePattern) -
+    \item \texttt{within(TypePattern)}:
     Picks out each join point where the executing code is defined in a type matched by TypePattern. 
-    \item withincode(MethodPattern $||$ ConstructorPattern) -
+    \item \texttt{withincode(MethodPattern $||$ ConstructorPattern)}:
     Picks out each join point where the executing code is defined in a method whose signature matches MethodPattern or a Constructor Pattern. 
-    \item cflow(Pointcut) -
+    \item \texttt{cflow(Pointcut)}:
     Picks out each join point in the control flow of any join point P picked out by Pointcut, including P itself. 
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Primitive Pointcuts}
   \begin{itemize}
-    \item this(Type or Id) -
+    \item \texttt{this(Type or Id)}:
     Picks out each join point where the currently executing object (the object bound to this) is an instance of Type, or of the type of the identifier Id. 
-    \item target(Type or Id) -
+    \item \texttt{target(Type or Id)}:
     Picks out each join point where the target object (the object on which a call or field operation is applied to) is an instance of Type, or of the type of the identifier Id.
-    \item args(Type or Id, ...) -
+    \item \texttt{args(Type or Id, ...)}:
     Picks out each join point where the arguments are instances of the appropriate type (or type of the identifier if using that form). 
   \end{itemize}
 \end{frame}
@@ -260,6 +260,48 @@ AspectJ can possibly detect and operate on the following eleven kinds of join po
     \item Aspects can be implemented similarly to Java classes, possessing properties like class extension, interface implementation or inner declarations.
     \item The AspectJ compiler translates aspects into Java classes.
   \end{itemize}
+\end{frame}
+
+\begin{frame}{Aspect Instantiation}
+   \begin{itemize}
+      \item AspectJ supports both singleton aspects and per object aspects.
+      \item Singleton aspects are instantiated only once and used in the whole program.
+      \begin{itemize}
+         \item Data members and methods of the aspect are accessed by using the method \texttt{Aspect.aspectOf()}.
+      \end{itemize}
+      \item For per object aspects, the aspect is instantiated for each object and each object can access the aspects data members and methods.
+      \begin{itemize}
+         \item The method \texttt{Aspect.aspectOf(object)} is used to access data and methods.
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}{Reflective Access}
+   \begin{itemize}
+      \item It is possible to access some information about the current join point.
+      \item AspectJ generates objects that encapsulate some of the context of the advice's current or enclosing join point.
+      \begin{itemize}
+         \item \texttt{thisJoinPoint}: bound to a complete join point object.
+         \item \texttt{thisJoinPointStaticPart}: static part of the previous object.
+         \item \texttt{thisEnclosingJoinPointStaticPart}: static part of the enclosing join point.
+      \end{itemize}
+   \end{itemize}
+\end{frame}
+
+\begin{frame}{Extension of classes}
+   \begin{itemize}
+      \item Aspects also allow the extension and modification of the class hierarchy.
+      \begin{itemize}
+         \item By changing the superclass.
+         \item Adding an interface.
+      \end{itemize}
+      \item Syntax:
+      \begin{itemize}
+         \item \texttt{declare parents: TypePattern extends Type;}
+         \item \texttt{declare parents: TypePattern implements TypeList;}
+      \end{itemize}
+      \item It also possible to define new class methods right after a \texttt{declare parents} line.
+   \end{itemize}
 \end{frame}
 
 %------------------------------Video (?)-------------------------------------------------------------
@@ -537,7 +579,17 @@ $
 \subsection*{}
 \begin{frame}{Conclusions}
 \begin{itemize}
-\item ...
+   \item AOP attempts to solve shortcomings of the current widely used paradigms.
+   \begin{itemize}
+      \item Crosscutting concerns.
+      \item Separation of concerns.
+   \end{itemize}
+   \item The AspectJ join point model allows the flexible definition of pointcuts and corresponding advices. 
+   \item We think that AspectJ is a highly complex tool with lots of options...
+   \begin{itemize}
+      \item But targeting Java is nice to bring AOP to the average programmer.
+      \item Outputting standard JVM byte-code is a nice plus.
+   \end{itemize}
 \end{itemize}
 \end{frame}
 
