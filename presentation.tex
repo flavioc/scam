@@ -343,173 +343,7 @@ Topics on the video:
 \end{itemize}
 \end{frame}
 
-\subsection*{Tracing}
-\begin{frame}[fragile]
-   \frametitle{Tracing - Trace}
-   {\scriptsize
-   \begin{lstlisting}[language=java]
-import org.aspectj.lang.Signature;
 
-abstract aspect Trace {
-  private static int callDepth = 0;
-
-  private static void printMethod(Signature sign,Object[] args) {
-    System.out.print(sign.getName() + "(");
-    for(int i = 0; i < args.length; ++i) {
-      System.out.print(args[i].toString());
-      if(i != args.length - 1)
-        System.out.print(", ");
-    }
-
-    System.out.print(")");
-  }
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - Trace}
-   {\scriptsize
-   \begin{lstlisting}[language=java]
-private static void printEntering(Signature sign, Object[] args){
-  printIndent();
-  System.out.print("-> ");
-  printMethod(sign, args);
-  System.out.println("");
-}
-private static void printExiting(Signature sign, Object[] args,
-      Object ret) {
-  printIndent();
-  System.out.print("<- ");
-  printMethod(sign, args);
-  System.out.println(" returning " + ret.toString());
-}
-private static void printIndent() {
-  for(int i = 0; i < callDepth; ++i)
-    System.out.print(" ");
-}
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - Trace}
-   {\scriptsize
-   \begin{lstlisting}[language=java]
-abstract pointcut myClass();
-
-pointcut constructorPC(): myClass() && execution(new(..));
-pointcut methodPC(): myClass() && execution(* *(..));
-
-before(): constructorPC() || methodPC() {
-  printEntering(thisJoinPoint.getSignature(),
-      thisJoinPoint.getArgs());
-  callDepth++;
-}
-
-after() returning (Object ret): constructorPC() || methodPC() {
-  callDepth--;
-  printExiting(thisJoinPoint.getSignature(),
-      thisJoinPoint.getArgs(), ret);
-}
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - MyClass}
-   {\tiny
-   \begin{lstlisting}[language=java]
-public class MyClass {
-  private int ab;
-
-  private int doFactorial(int n) {
-    if(n <= 1)
-      return 1;
-    return n * doFactorial(n-1);
-  }
-  public int factorial() {
-    return doFactorial(ab);
-  }
-
-  private int doFib(int n) {
-    if(n <= 1)
-      return n;
-    return doFib(n-1) + doFib(n-2);
-  }
-  public int fib() {
-    return doFib(ab);
-  }
-
-  public MyClass(int a, int b) {
-    ab = a * b;
-  }
-}
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - ClassTrace}
-   {\small
-   \begin{lstlisting}[language=java]
-public aspect ClassTrace extends Trace {
-  pointcut myClass(): within(MyClass);
-}
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - Main}
-   {\footnotesize
-   \begin{lstlisting}[language=java]
-public class Main {
-  public static void main(String[] args) {
-    MyClass obj1 = new MyClass(2, 2);
-    MyClass obj2 = new MyClass(3, 1);
-
-    System.out.println(obj1.factorial());
-    System.out.println(obj2.fib());
-  }
-}
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - Execution}
-   {\scriptsize
-   \begin{lstlisting}
--> <init>(2, 2)
- -> <init>(3, 1)
-  -> factorial()
-   -> doFactorial(4)
-    -> doFactorial(3)
-     -> doFactorial(2)
-      -> doFactorial(1)
-      <- doFactorial(1) returning 1
-     <- doFactorial(2) returning 2
-    <- doFactorial(3) returning 6
-   <- doFactorial(4) returning 24
-  <- factorial() returning 24
-24
-   \end{lstlisting}}
-\end{frame}
-
-\begin{frame}[fragile]
-   \frametitle{Tracing - Execution}
-   {\scriptsize
-   \begin{lstlisting}
-  -> fib()
-   -> doFib(3)
-    -> doFib(2)
-     -> doFib(1)
-     <- doFib(1) returning 1
-     -> doFib(0)
-     <- doFib(0) returning 0
-    <- doFib(2) returning 1
-    -> doFib(1)
-    <- doFib(1) returning 1
-   <- doFib(3) returning 2
-  <- fib() returning 2
-2
-   \end{lstlisting}}
-\end{frame}
 
 \subsection*{Observer Pattern}
 \begin{frame}{Observer Pattern}
@@ -711,6 +545,174 @@ Updating display...
 $
 \end{lstlisting}
    }
+\end{frame}
+
+\subsection*{Tracing}
+\begin{frame}[fragile]
+   \frametitle{Tracing - Trace}
+   {\scriptsize
+   \begin{lstlisting}[language=java]
+import org.aspectj.lang.Signature;
+
+abstract aspect Trace {
+  private static int callDepth = 0;
+
+  private static void printMethod(Signature sign,Object[] args) {
+    System.out.print(sign.getName() + "(");
+    for(int i = 0; i < args.length; ++i) {
+      System.out.print(args[i].toString());
+      if(i != args.length - 1)
+        System.out.print(", ");
+    }
+
+    System.out.print(")");
+  }
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - Trace}
+   {\scriptsize
+   \begin{lstlisting}[language=java]
+private static void printEntering(Signature sign, Object[] args){
+  printIndent();
+  System.out.print("-> ");
+  printMethod(sign, args);
+  System.out.println("");
+}
+private static void printExiting(Signature sign, Object[] args,
+      Object ret) {
+  printIndent();
+  System.out.print("<- ");
+  printMethod(sign, args);
+  System.out.println(" returning " + ret.toString());
+}
+private static void printIndent() {
+  for(int i = 0; i < callDepth; ++i)
+    System.out.print(" ");
+}
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - Trace}
+   {\scriptsize
+   \begin{lstlisting}[language=java]
+abstract pointcut myClass();
+
+pointcut constructorPC(): myClass() && execution(new(..));
+pointcut methodPC(): myClass() && execution(* *(..));
+
+before(): constructorPC() || methodPC() {
+  printEntering(thisJoinPoint.getSignature(),
+      thisJoinPoint.getArgs());
+  callDepth++;
+}
+
+after() returning (Object ret): constructorPC() || methodPC() {
+  callDepth--;
+  printExiting(thisJoinPoint.getSignature(),
+      thisJoinPoint.getArgs(), ret);
+}
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - MyClass}
+   {\tiny
+   \begin{lstlisting}[language=java]
+public class MyClass {
+  private int ab;
+
+  private int doFactorial(int n) {
+    if(n <= 1)
+      return 1;
+    return n * doFactorial(n-1);
+  }
+  public int factorial() {
+    return doFactorial(ab);
+  }
+
+  private int doFib(int n) {
+    if(n <= 1)
+      return n;
+    return doFib(n-1) + doFib(n-2);
+  }
+  public int fib() {
+    return doFib(ab);
+  }
+
+  public MyClass(int a, int b) {
+    ab = a * b;
+  }
+}
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - ClassTrace}
+   {\small
+   \begin{lstlisting}[language=java]
+public aspect ClassTrace extends Trace {
+  pointcut myClass(): within(MyClass);
+}
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - Main}
+   {\footnotesize
+   \begin{lstlisting}[language=java]
+public class Main {
+  public static void main(String[] args) {
+    MyClass obj1 = new MyClass(2, 2);
+    MyClass obj2 = new MyClass(3, 1);
+
+    System.out.println(obj1.factorial());
+    System.out.println(obj2.fib());
+  }
+}
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - Execution}
+   {\scriptsize
+   \begin{lstlisting}
+-> <init>(2, 2)
+ -> <init>(3, 1)
+  -> factorial()
+   -> doFactorial(4)
+    -> doFactorial(3)
+     -> doFactorial(2)
+      -> doFactorial(1)
+      <- doFactorial(1) returning 1
+     <- doFactorial(2) returning 2
+    <- doFactorial(3) returning 6
+   <- doFactorial(4) returning 24
+  <- factorial() returning 24
+24
+   \end{lstlisting}}
+\end{frame}
+
+\begin{frame}[fragile]
+   \frametitle{Tracing - Execution}
+   {\scriptsize
+   \begin{lstlisting}
+  -> fib()
+   -> doFib(3)
+    -> doFib(2)
+     -> doFib(1)
+     <- doFib(1) returning 1
+     -> doFib(0)
+     <- doFib(0) returning 0
+    <- doFib(2) returning 1
+    -> doFib(1)
+    <- doFib(1) returning 1
+   <- doFib(3) returning 2
+  <- fib() returning 2
+2
+   \end{lstlisting}}
 \end{frame}
 
 \subsection*{Programming by Contract}
